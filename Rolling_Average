@@ -1,0 +1,82 @@
+class RollingAverage:
+    def __init__(self, nums, k):
+        """
+        nums(int or float): List of numbers to compute the rolling average for
+        k(int): Window size for the rolling average
+        """
+        self.nums = nums
+        self.k = k
+        self.validate_inputs()
+
+    def validate_inputs(self): #To validate the inputs to ensure they meet requirements
+        """
+        - nums must be a non-empty list of numbers.
+        - k must be a positive integer.
+        """
+        if not isinstance(self.nums, list) or not all(isinstance(num, (int, float)) for num in self.nums):
+            raise ValueError("`nums` must be a list of integers or floats.")
+        if not isinstance(self.k, int) or self.k <= 0:
+            raise ValueError("`k` must be a positive integer.")
+        if len(self.nums) == 0:
+            raise ValueError("`nums` cannot be an empty list.")
+
+    def calculate_rolling_average(self): #To calculate the rolling average for the given list of numbers and window size
+
+        if self.k > len(self.nums): #If window size is larger than list length, return the average of the whole list
+            return [sum(self.nums) / len(self.nums)]
+
+        rolling_averages = []
+        window_sum = 0
+        start = 0
+        
+        #Sliding window
+        for end in range(len(self.nums)):
+            window_sum += self.nums[end]
+            
+            if end - start + 1 == self.k: #When window reach the size k
+
+                rolling_averages.append(window_sum / self.k)
+                window_sum -= self.nums[start]
+                start += 1
+
+        return rolling_averages
+
+
+def main(): #Testing
+    
+    print("Welcome to the Rolling Average Calculator!")
+    
+    while True:
+        try:
+            nums_input = input("Enter a list of numbers (comma-separated): ")
+            nums = [float(num.strip()) for num in nums_input.split(",")]
+
+            k = int(input("Enter the window size (positive integer): "))
+
+            ra = RollingAverage(nums, k)
+            result = ra.calculate_rolling_average()
+            print("Rolling Averages:", result)
+
+        except ValueError as e:
+            print(f"Input error: {e}")
+
+        cont = input("Would you like to calculate another rolling average? (yes/no): ").strip().lower()
+        if cont != 'yes':
+            print("Exiting the Rolling Average Calculator. Goodbye!")
+            break
+
+main()
+
+
+'''
+Example:
+
+Welcome to the Rolling Average Calculator!
+Enter a list of numbers (comma-separated):  1,2,3,4,5,6,7,8
+#Don't enter square brackets
+Enter the window size (positive integer):  3
+Rolling Averages: [2.0, 3.0, 4.0, 5.0, 6.0, 7.0]
+Would you like to calculate another rolling average? (yes/no):  no
+Exiting the Rolling Average Calculator. Goodbye!
+
+'''
